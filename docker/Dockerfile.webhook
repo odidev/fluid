@@ -17,7 +17,8 @@ RUN apk add --update curl tzdata iproute2 bash libc6-compat vim &&  \
 	echo "Asia/Shanghai" >  /etc/timezone
 
 ENV K8S_VERSION v1.14.8
-RUN curl -o /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/amd64/kubectl && chmod +x /usr/local/bin/kubectl
+RUN if [ `uname -m` == "aarch64" ] ; then ARCH="arm64"; else ARCH="amd64"; fi
+RUN curl -o /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/${K8S_VERSION}/bin/linux/${ARCH}/kubectl && chmod +x /usr/local/bin/kubectl
 
 COPY --from=builder /go/bin/fluid-webhook /usr/local/bin/fluid-webhook
 COPY --from=builder /go/bin/dlv /usr/local/bin/dlv
